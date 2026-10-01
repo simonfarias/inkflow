@@ -14,4 +14,4 @@ Sistema de gestión para un estudio de tatuajes. Proyecto semestral de Fundament
 
 ## Tecnología
 
-Java 17, Spring Boot, Thymeleaf y PostgreSQL.
+Java 17, Spring Boot, Thymeleaf y PostgreSQL. 
