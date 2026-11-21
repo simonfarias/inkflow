@@ -1,0 +1,156 @@
+@startuml
+skinparam dpi 170
+skinparam backgroundColor white
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 6
+skinparam ArrowColor #181818
+skinparam ArrowFontSize 11
+skinparam classBackgroundColor #F4F4F4
+skinparam classBorderColor #181818
+skinparam classHeaderBackgroundColor #F4F4F4
+skinparam classAttributeIconSize 0
+skinparam packageBorderColor #888888
+skinparam rectangleBackgroundColor #F4F4F4
+skinparam rectangleBorderColor #181818
+skinparam participantBackgroundColor #F4F4F4
+skinparam participantBorderColor #181818
+skinparam actorBackgroundColor #F4F4F4
+skinparam actorBorderColor #181818
+skinparam sequenceLifeLineBorderColor #888888
+skinparam sequenceGroupBorderColor #181818
+skinparam sequenceGroupBackgroundColor #FBE9E9
+skinparam sequenceBoxBorderColor #888888
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #B0A060
+skinparam stereotypeCBackgroundColor #FBE9E9
+skinparam dpi 130
+skinparam nodesep 40
+skinparam ranksep 60
+hide circle
+hide empty members
+skinparam packageStyle rectangle
+skinparam packageFontStyle bold
+title Diagrama de clases refinado (en rojo: lo que cambió respecto del LAB3)
+
+package "presentacion" {
+  class ControladorReserva <<controller>> #FBE9E9 {
+    - servicio : ServicioReserva
+    + verBloques(idTrabajo : Long, modelo : Model) : String
+    + reservar(idTrabajo : Long, idBloque : Long, acepta : boolean, comprobante : MultipartFile) : String
+  }
+  class ControladorTrabajo <<controller>> {
+    - servicio : ServicioTrabajo
+    + verFicha(idTrabajo : Long, modelo : Model) : String
+  }
+}
+
+package "servicio" {
+  class ServicioReserva <<service>> #FBE9E9 {
+    - trabajos : TrabajoRepositorio
+    - bloques : BloqueRepositorio
+    - archivos : AlmacenArchivos
+    + bloquesDisponibles(idTrabajo : Long) : List<Bloque>
+    + reservar(idTrabajo : Long, idBloque : Long, acepta : boolean, comprobante : Archivo) : Sesion {transaccional}
+  }
+  class ServicioTrabajo <<service>> #FBE9E9 {
+    - trabajos : TrabajoRepositorio
+    - auditoria : ServicioAuditoria
+    + fichaPara(u : Usuario, idTrabajo : Long) : Trabajo
+    + cuestionarioPara(u : Usuario, idTrabajo : Long) : CuestionarioSalud
+  }
+  class ServicioAuditoria <<service>> #FBE9E9 {
+    - registros : RegistroAccesoRepositorio
+    + registrarAcceso(u : Usuario, recurso : String) : void
+  }
+}
+
+package "dominio" {
+  abstract class Usuario <<abstract>>
+  class Cliente
+  class Personal {
+    - roles : Set<Rol>
+    + tieneRol(rol : Rol) : boolean
+    + bloquesLibres(duracionHoras : double) : List<Bloque>
+  }
+  class Trabajo {
+    - estado : EstadoTrabajo
+    + duracionSesionHoras() : double
+    + tieneAbonoVigente() : boolean
+    + saldoPendiente() : int
+    + reservarSesion(b : Bloque, estado : EstadoSesion) : Sesion
+    + registrarAbonoPendiente(comprobante : String) : Abono
+  }
+  class Sesion {
+    - estado : EstadoSesion
+    + estaVigente() : boolean
+  }
+  class Bloque #FBE9E9 {
+    - fecha : LocalDate
+    - horaInicio : LocalTime
+    - horaTermino : LocalTime
+    + estaLibre() : boolean
+  }
+  class Abono
+  class Consentimiento #FBE9E9 {
+    - fechaAceptacion : LocalDateTime
+    + descargarPdf() : byte[]
+  }
+  class CuestionarioSalud #FBE9E9 {
+    - respuestas : Map<String, String>
+    + puedeVerlo(u : Usuario) : boolean
+  }
+  class RegistroAcceso #FBE9E9 {
+    - recurso : String
+    - fechaHora : LocalDateTime
+  }
+}
+
+package "persistencia" {
+  interface TrabajoRepositorio <<interface>> #FBE9E9 {
+    + buscarPorId(id : Long) : Trabajo
+    + guardar(t : Trabajo) : Trabajo
+  }
+  interface BloqueRepositorio <<interface>> #FBE9E9 {
+    + buscarPorIdParaActualizar(id : Long) : Bloque
+  }
+  interface RegistroAccesoRepositorio <<interface>> #FBE9E9 {
+    + guardar(r : RegistroAcceso) : RegistroAcceso
+  }
+  interface AlmacenArchivos <<interface>> #FBE9E9 {
+    + guardar(a : Archivo) : String
+  }
+}
+
+ControladorReserva --> ServicioReserva
+ControladorTrabajo --> ServicioTrabajo
+ServicioTrabajo --> ServicioAuditoria
+ServicioReserva ..> TrabajoRepositorio
+ServicioReserva ..> BloqueRepositorio
+ServicioReserva ..> AlmacenArchivos
+ServicioTrabajo ..> TrabajoRepositorio
+ServicioAuditoria ..> RegistroAccesoRepositorio
+ServicioReserva ..> Trabajo
+ServicioTrabajo ..> CuestionarioSalud
+
+Usuario <|-- Cliente
+Usuario <|-- Personal
+Cliente "1" -- "0..*" Trabajo
+Personal "1" -- "0..*" Trabajo : tatuador asignado
+Personal "1" -- "0..*" Bloque : ofrece
+Trabajo "1" *-- "0..*" Sesion
+Trabajo "1" *-- "0..*" Abono
+Trabajo "1" *-- "0..1" Consentimiento
+Consentimiento "1" *-- "1" CuestionarioSalud
+Sesion "0..*" -- "1" Bloque : ocupa
+RegistroAcceso "0..*" --> "1" Usuario
+
+note bottom of Bloque
+  estaLibre() = no tiene una sesión vigente.
+  Se elimina el atributo estado (dato duplicado).
+  RN03/RNF02: índice único en la base de datos
+  sobre las sesiones vigentes de cada bloque.
+end note
+note "En las clases sin color solo se muestran los\nmiembros relevantes; el resto sigue igual que en el LAB3.\nCotizacion, VersionDiseno, FotoAvance, Estudio,\nPoliticaEstudio y las enumeraciones no cambian." as N1
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+skinparam dpi 170
+skinparam backgroundColor white
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 6
+skinparam ArrowColor #181818
+skinparam ArrowFontSize 11
+skinparam classBackgroundColor #F4F4F4
+skinparam classBorderColor #181818
+skinparam classHeaderBackgroundColor #F4F4F4
+skinparam classAttributeIconSize 0
+skinparam packageBorderColor #888888
+skinparam rectangleBackgroundColor #F4F4F4
+skinparam rectangleBorderColor #181818
+skinparam participantBackgroundColor #F4F4F4
+skinparam participantBorderColor #181818
+skinparam actorBackgroundColor #F4F4F4
+skinparam actorBorderColor #181818
+skinparam sequenceLifeLineBorderColor #888888
+skinparam sequenceGroupBorderColor #181818
+skinparam sequenceGroupBackgroundColor #FBE9E9
+skinparam sequenceBoxBorderColor #888888
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #B0A060
+skinparam stereotypeCBackgroundColor #FBE9E9
+skinparam nodeBackgroundColor #F4F4F4
+skinparam nodeBorderColor #181818
+skinparam artifactBackgroundColor #FFFFFF
+skinparam artifactBorderColor #181818
+skinparam databaseBackgroundColor #FBE9E9
+skinparam databaseBorderColor #C62828
+left to right direction
+title Vista de despliegue de InkFlow (prototipo)
+
+node "Celular del cliente o del tatuador\n«dispositivo»" as CEL {
+  artifact "Navegador web\n(Chrome, Safari)" as N1
+}
+node "PC de la recepción\n«dispositivo»" as PC {
+  artifact "Navegador web" as N2
+}
+node "Servidor de aplicaciones\n«servidor en la nube, Linux»" as SRV {
+  node "JVM Java 17" as JVM {
+    artifact "inkflow.jar\n(Spring Boot + Thymeleaf)" as JAR
+  }
+  folder "/datos/archivos\n(volumen persistente)" as VOL
+}
+node "Servidor de base de datos\n«servidor»" as DBS {
+  database "PostgreSQL 16\nbase inkflow" as PG
+}
+node "Repositorio GitHub" as GH {
+  artifact "código fuente\n(RNF06)" as SRC
+}
+
+N1 --> JAR : HTTPS / 443\n(4G o wifi)
+N2 --> JAR : HTTPS / 443
+JAR --> PG : JDBC / 5432\nconexión cifrada
+JAR --> VOL : lectura y escritura\nde archivos
+SRC ..> JAR : se compila y\ndespliega desde
+@enduml

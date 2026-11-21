@@ -1,0 +1,120 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#fff;font-family:"DejaVu Sans",sans-serif;color:#222}
+#c{padding:20px 22px;width:1400px}
+h1{font-size:18px;margin:0 0 4px;text-align:center}
+.sub{font-size:12px;color:#666;text-align:center;margin-bottom:16px}
+.row{display:flex;gap:26px;justify-content:center}
+.col{display:flex;flex-direction:column;align-items:center}
+.cap{font-size:13px;font-weight:700;margin-bottom:8px}
+.cap span{display:block;font-weight:400;color:#666;font-size:11px;text-align:center}
+.ph{width:300px;height:620px;border:3px solid #333;border-radius:26px;background:#fff;position:relative;overflow:visible;padding:14px 12px 0;box-sizing:border-box}
+.ph .bar{height:8px;width:70px;background:#333;border-radius:4px;margin:0 auto 10px}
+.top{display:flex;align-items:center;justify-content:space-between;font-size:12px;border-bottom:1.5px solid #ccc;padding-bottom:7px;margin-bottom:9px}
+.top b{font-size:14px}
+.t{font-size:15px;font-weight:700;margin:2px 0 8px}
+.card{border:1.5px solid #bbb;border-radius:8px;padding:8px 9px;margin-bottom:8px;font-size:11.5px;line-height:1.45;background:#fafafa}
+.card .h{font-weight:700;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.btn{border:2px solid #222;background:#222;color:#fff;border-radius:8px;text-align:center;padding:9px;font-size:13px;font-weight:700;margin-top:6px}
+.btn.o{background:#fff;color:#222}
+.btn.d{background:#fff;color:#C62828;border-color:#C62828}
+.btn.dis{background:#ccc;border-color:#ccc;color:#fff}
+.nav{position:absolute;left:0;right:0;bottom:0;height:46px;border-top:1.5px solid #ccc;display:flex;justify-content:space-around;align-items:center;font-size:11px;color:#555;border-radius:0 0 22px 22px;background:#f4f4f4}
+.nav .on{color:#000;font-weight:700}
+.step{display:flex;justify-content:space-between;margin:6px 0 10px;position:relative;padding:0 8px}
+.step:before{content:"";position:absolute;top:8px;left:8px;right:8px;border-top:2px solid #ccc}
+.st{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:44px;font-size:8.5px;text-align:center;color:#666}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid #999;background:#fff;margin-bottom:3px}
+.dot.ok{background:#222;border-color:#222}.dot.now{background:#fff;border:4px solid #C62828;width:12px;height:12px}
+.st.now{color:#C62828;font-weight:700}
+.img{height:62px;border:1.5px solid #bbb;border-radius:6px;background:linear-gradient(to top right,transparent 49%,#bbb 50%,transparent 51%),linear-gradient(to top left,transparent 49%,#bbb 50%,transparent 51%);margin-top:4px}
+.wk{display:flex;justify-content:space-between;align-items:center;border:1.5px solid #bbb;border-radius:8px;padding:6px 10px;font-size:12px;margin-bottom:8px}
+.day{font-size:10.5px;font-weight:700;color:#555;margin:6px 0 4px}
+.blk{border:1.5px solid #bbb;border-radius:7px;padding:7px 9px;font-size:12px;margin-bottom:5px;display:flex;justify-content:space-between}
+.blk.sel{border:2.5px solid #222;background:#eee;font-weight:700}
+.chk{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;margin:8px 0}
+.box{width:15px;height:15px;border:2px solid #555;border-radius:3px;flex:none;margin-top:1px}
+.up{border:2px dashed #999;border-radius:8px;text-align:center;padding:14px 6px;font-size:11.5px;color:#555;margin:6px 0}
+.info{background:#FBE9E9;border-radius:7px;padding:7px 9px;font-size:11px;margin:6px 0;color:#222}
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.35);border-radius:22px}
+.dlg{position:absolute;left:18px;right:18px;top:170px;background:#fff;border-radius:12px;padding:14px;border:2px solid #222;font-size:12px;line-height:1.5}
+.dlg .t{font-size:14px}
+.mk{position:absolute;width:26px;height:26px;border-radius:50%;background:#C62828;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 0 0 1px #C62828;z-index:5}
+.leg{display:flex;gap:18px;margin-top:20px}
+.lg{flex:1;border:1.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.45}
+.lg b{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:4px}
+.lg .n{width:22px;height:22px;border-radius:50%;background:#C62828;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+</style></head><body><div id="c">
+<h1>Wireframes de media fidelidad: flujo de reserva desde el celular (360 px)</h1>
+<div class="sub">CU13 Consultar ficha → CU07 Reservar sesión (incluye CU16) → CU18 Subir comprobante → CU08 Cancelar sesión. Los círculos rojos marcan dónde se aplica cada principio.</div>
+<div class="row">
+
+<div class="col"><div class="cap">A. Mi trabajo<span>CU13 · ficha reducida del cliente (RF13.3)</span></div>
+<div class="ph"><div class="bar"></div>
+<div class="top"><span>‹ Trabajos</span><b>InkFlow</b><span>☰</span></div>
+<div class="t">Manga brazo izquierdo</div>
+<div class="mk" style="left:-14px;top:112px">2</div>
+<div class="step">
+ <div class="st"><div class="dot ok"></div>Solicitado</div><div class="st"><div class="dot ok"></div>Cotizado</div><div class="st now"><div class="dot now"></div>Aceptado</div><div class="st"><div class="dot"></div>Con abono</div><div class="st"><div class="dot"></div>En curso</div><div class="st"><div class="dot"></div>Terminado</div>
+</div>
+<div class="info">Siguiente paso: reserva tu primera sesión. La hora se confirma cuando el estudio valide tu abono.</div>
+<div class="card"><div class="h">Cotización de Juan Pablo</div>Precio por sesión: $120.000<br>5 sesiones de 3 horas aprox.<br>Abono para reservar: $40.000</div>
+<div class="card"><div class="h">Abono y saldo</div>Sin abono validado todavía</div>
+<div class="card"><div class="h">Diseño aprobado</div>Versión 2 · 12 nov<div class="img"></div></div>
+<div class="btn">Reservar sesión</div>
+<div class="nav"><span class="on">Mis trabajos</span><span>Agenda</span><span>Perfil</span></div>
+</div></div>
+
+<div class="col"><div class="cap">B. Elegir hora<span>CU07 + CU16 · bloques donde cabe la sesión</span></div>
+<div class="ph"><div class="bar"></div>
+<div class="top"><span>‹ Mi trabajo</span><b>Reservar sesión</b><span></span></div>
+<div class="mk" style="right:-14px;top:52px">1</div>
+<div style="font-size:11.5px;color:#555;margin-bottom:6px">Horas libres de <b>Juan Pablo</b> para una sesión de 3 h</div>
+<div class="wk"><span>‹</span><b>23 – 29 de noviembre</b><span>›</span></div>
+<div class="day">Martes 24</div>
+<div class="blk sel"><span>● 11:00 – 14:00</span><span>3 h</span></div>
+<div class="blk"><span>○ 16:00 – 20:00</span><span>4 h</span></div>
+<div class="day">Jueves 26</div>
+<div class="blk"><span>○ 15:00 – 18:00</span><span>3 h</span></div>
+<div class="card" style="margin-top:8px"><div class="h">Condiciones del estudio</div>Con 48 horas o más de anticipación puedes reagendar una vez y conservas tu abono. Con menos de 48 horas, o si no vienes, pierdes el abono.</div>
+<div class="mk" style="left:-14px;top:440px">3</div>
+<div class="chk"><div class="box"></div><span>Leí y acepto las condiciones de cancelación</span></div>
+<div class="btn dis">Continuar</div>
+<div style="font-size:10px;color:#777;text-align:center;margin-top:4px">Se activa al aceptar las condiciones</div>
+<div class="nav"><span class="on">Mis trabajos</span><span>Agenda</span><span>Perfil</span></div>
+</div></div>
+
+<div class="col"><div class="cap">C. Subir comprobante<span>CU18 · solo si no hay abono vigente</span></div>
+<div class="ph"><div class="bar"></div>
+<div class="top"><span>‹ Elegir hora</span><b>Abono</b><span></span></div>
+<div class="card"><div class="h">Tu hora</div>Martes 24 de noviembre, 11:00 a 14:00<br>con Juan Pablo</div>
+<div class="card"><div class="h">Transfiere el abono</div>Monto: <b>$40.000</b><br>Banco · tipo y número de cuenta<br>Titular y RUT del estudio<br><span style="text-decoration:underline">Copiar datos</span></div>
+<div class="mk" style="right:-14px;top:268px">2</div>
+<div class="up">⬆<br>Toca para subir la foto o el PDF<br>del comprobante (JPG, PNG o PDF)</div>
+<div class="info">Tu hora quedará <b>prerreservada</b>: nadie más puede tomarla mientras el estudio revisa tu transferencia.</div>
+<div class="btn">Confirmar reserva</div>
+<div class="mk" style="left:-14px;top:447px">3</div>
+<div class="btn o">Volver y elegir otra hora</div>
+<div class="nav"><span class="on">Mis trabajos</span><span>Agenda</span><span>Perfil</span></div>
+</div></div>
+
+<div class="col"><div class="cap">D. Cancelar sesión<span>CU08 · aviso antes de aplicar RN06</span></div>
+<div class="ph"><div class="bar"></div>
+<div class="top"><span>‹ Mi trabajo</span><b>Sesión</b><span></span></div>
+<div class="card"><div class="h">Próxima sesión</div>Martes 24, 11:00 a 14:00</div>
+<div class="btn o">Reagendar</div><div class="btn d">Cancelar sesión</div>
+<div class="nav"><span class="on">Mis trabajos</span><span>Agenda</span><span>Perfil</span></div>
+<div class="dim"></div>
+<div class="dlg"><div class="t">¿Cancelar tu sesión?</div>
+Faltan <b>30 horas</b> para tu sesión. Según las condiciones que aceptaste, si cancelas ahora <b>pierdes tu abono de $40.000</b>.<br><br>Si quieres conservarlo, todavía puedes hablar con el estudio.
+<div class="btn">Mantener mi sesión</div><div class="btn d">Cancelar de todos modos</div></div>
+<div class="mk" style="right:-14px;top:182px">3</div>
+<div class="mk" style="left:-14px;top:250px">1</div>
+</div></div>
+</div>
+
+<div class="leg">
+<div class="lg"><b><span class="n">1</span>Familiaridad</b>La interfaz usa las palabras del estudio y del cliente: "hora", "abono", "reagendar", "sesión", y el nombre del tatuador. No usa términos del sistema como "bloque" o "slot", que son nuestros y no de ellos.</div>
+<div class="lg"><b><span class="n">2</span>Guía al usuario</b>La ficha muestra en qué estado va el trabajo y cuál es el siguiente paso (RN11). El comprobante explica qué formatos se aceptan y qué significa quedar prerreservado, antes de que el cliente se equivoque.</div>
+<div class="lg"><b><span class="n">3</span>Recuperabilidad</b>Antes de cualquier acción con consecuencias, el sistema pide confirmar y muestra qué pasará: aceptar las condiciones habilita "Continuar", siempre hay un "Volver", y la cancelación avisa que se pierde el abono (RN06), con la opción segura destacada.</div>
+</div>
+</div></body></html>
