@@ -1,0 +1,61 @@
+@startuml
+skinparam dpi 170
+skinparam backgroundColor white
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 6
+skinparam ArrowColor #181818
+skinparam ArrowFontSize 11
+skinparam classBackgroundColor #F4F4F4
+skinparam classBorderColor #181818
+skinparam classHeaderBackgroundColor #F4F4F4
+skinparam classAttributeIconSize 0
+skinparam packageBorderColor #888888
+skinparam rectangleBackgroundColor #F4F4F4
+skinparam rectangleBorderColor #181818
+skinparam participantBackgroundColor #F4F4F4
+skinparam participantBorderColor #181818
+skinparam actorBackgroundColor #F4F4F4
+skinparam actorBorderColor #181818
+skinparam sequenceLifeLineBorderColor #888888
+skinparam sequenceGroupBorderColor #181818
+skinparam sequenceGroupBackgroundColor #FBE9E9
+skinparam sequenceBoxBorderColor #888888
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #B0A060
+skinparam stereotypeCBackgroundColor #FBE9E9
+skinparam rectangle {
+  BackgroundColor<<fuera>> #FFFFFF
+  BorderColor<<fuera>> #9E9E9E
+  FontColor<<fuera>> #757575
+  StereotypeFontColor<<fuera>> #FFFFFF
+  StereotypeFontSize<<fuera>> 1
+}
+title Modelo de contexto de InkFlow
+
+rectangle "<<system>>\n**InkFlow**\nGestión de trabajos del estudio\n(web adaptable al celular)" as INK #FBE9E9
+
+rectangle "<<system>>\nBanco del estudio\n(transferencias)" as BANCO
+rectangle "<<system>>\nInstagram / WhatsApp\n(canales de contacto)" as RRSS
+rectangle "<<organización>>\nSeremi de Salud\n(fiscalización sanitaria)" as SEREMI
+
+rectangle "<<system>>\nPasarela de pagos" as PAG <<fuera>>
+rectangle "<<system>>\nServicio de correo\no mensajería" as MAIL <<fuera>>
+rectangle "<<system>>\nSII (boletas y facturas)" as SII <<fuera>>
+
+BANCO -down- INK : comprobante que sube el cliente;\nla recepción verifica en el banco (CU03)
+RRSS -down- INK : el cliente llega por estos canales\ny pide su cotización en InkFlow (CU01)
+INK -left- SEREMI : consentimientos descargables\nante una fiscalización (RNF08)
+
+INK .down.> PAG : fuera de alcance
+INK .down.> MAIL : fuera de alcance
+INK .down.> SII : fuera de alcance
+
+note bottom of MAIL
+  Línea punteada: sistemas que InkFlow
+  decide **no** integrar (sección 3 del
+  documento técnico). El abono se valida
+  a mano y el cliente revisa su ficha.
+end note
+@enduml

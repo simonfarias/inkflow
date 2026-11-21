@@ -1,0 +1,98 @@
+@startuml
+skinparam dpi 170
+skinparam backgroundColor white
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 6
+skinparam ArrowColor #181818
+skinparam ArrowFontSize 11
+skinparam classBackgroundColor #F4F4F4
+skinparam classBorderColor #181818
+skinparam classHeaderBackgroundColor #F4F4F4
+skinparam classAttributeIconSize 0
+skinparam packageBorderColor #888888
+skinparam rectangleBackgroundColor #F4F4F4
+skinparam rectangleBorderColor #181818
+skinparam participantBackgroundColor #F4F4F4
+skinparam participantBorderColor #181818
+skinparam actorBackgroundColor #F4F4F4
+skinparam actorBorderColor #181818
+skinparam sequenceLifeLineBorderColor #888888
+skinparam sequenceGroupBorderColor #181818
+skinparam sequenceGroupBackgroundColor #FBE9E9
+skinparam sequenceBoxBorderColor #888888
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #B0A060
+skinparam stereotypeCBackgroundColor #FBE9E9
+autonumber "0."
+autoactivate off
+title Diagrama de secuencia: CU07 Reservar sesión (incluye CU16, extendido por CU18)
+
+actor Cliente as C
+participant ":ControladorReserva" as K
+participant "t:Trabajo" as T
+participant "tat:Personal" as P
+participant "b:Bloque" as B
+
+group «include» CU16 Seleccionar bloque libre
+C -> K : iniciarReserva(idTrabajo)
+activate K
+K -> T : duracionSesionHoras()
+activate T
+T --> K : horas
+deactivate T
+K -> P : bloquesLibres(horas)
+activate P
+P --> K : bloques
+deactivate P
+K --> C : bloques libres y condiciones de cancelación (RF07.1, RF07.3)
+deactivate K
+end
+
+C -> K : reservar(idBloque, aceptaCondiciones = true)
+activate K
+K -> B : estaLibre()
+activate B
+B --> K : libre
+deactivate B
+note right of B
+  estaLibre() y ocupar() van en una
+  sola transacción: si dos clientes
+  eligen el mismo bloque, solo uno
+  lo obtiene (RN03, RNF02)
+end note
+
+alt libre = false   [6a: otro usuario tomó el bloque]
+  K --> C : bloque no disponible, elegir otro (vuelve a CU16)
+else libre = true
+  K -> T : tieneAbonoVigente()
+  activate T
+  T --> K : vigente
+  deactivate T
+  opt vigente = false   [«extend» CU18 Subir comprobante]
+    K --> C : monto del abono y datos de transferencia
+    C -> K : subirComprobante(archivo)
+    K -> T : registrarAbonoPendiente(archivo)
+    activate T
+    create participant "a:Abono" as A
+    T -> A : <<create>>
+    T --> K : a
+    deactivate T
+  end
+  K -> T : reservarSesion(b, estado)
+  activate T
+  note right of T
+    estado = CONFIRMADA si vigente;
+    PRERRESERVADA si no (RN02)
+  end note
+  create participant "s:Sesion" as S
+  T -> S : <<create>>
+  T -> B : ocupar()
+  T --> K : s
+  deactivate T
+  K --> C : sesión confirmada, o prerreservada\nhasta validar el abono (CU03)
+end
+deactivate K
+
+@enduml

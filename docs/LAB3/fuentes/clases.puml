@@ -1,0 +1,223 @@
+@startuml
+skinparam dpi 170
+skinparam backgroundColor white
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 6
+skinparam ArrowColor #181818
+skinparam ArrowFontSize 11
+skinparam classBackgroundColor #F4F4F4
+skinparam classBorderColor #181818
+skinparam classHeaderBackgroundColor #F4F4F4
+skinparam classAttributeIconSize 0
+skinparam packageBorderColor #888888
+skinparam rectangleBackgroundColor #F4F4F4
+skinparam rectangleBorderColor #181818
+skinparam participantBackgroundColor #F4F4F4
+skinparam participantBorderColor #181818
+skinparam actorBackgroundColor #F4F4F4
+skinparam actorBorderColor #181818
+skinparam sequenceLifeLineBorderColor #888888
+skinparam sequenceGroupBorderColor #181818
+skinparam sequenceGroupBackgroundColor #FBE9E9
+skinparam sequenceBoxBorderColor #888888
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #B0A060
+skinparam stereotypeCBackgroundColor #FBE9E9
+skinparam dpi 130
+skinparam nodesep 45
+skinparam ranksep 55
+hide circle
+hide empty members
+title Diagrama de clases de InkFlow
+
+abstract class Usuario <<abstract>> {
+  - id : Long
+  - nombre : String
+  - correo : String
+  - telefono : String
+  - hashClave : String
+  - activo : boolean
+  + iniciarSesion(correo : String, clave : String) : boolean
+}
+
+class Cliente {
+  - fechaNacimiento : LocalDate
+  - rutOPasaporte : String
+  - contactoEmergencia : String
+  + esMayorDeEdad() : boolean
+}
+
+class Personal {
+  - roles : Set<Rol>
+  + tieneRol(rol : Rol) : boolean
+  + agregarBloque(inicio : LocalDateTime, termino : LocalDateTime) : Bloque
+  + bloquesLibres(duracionHoras : double) : List<Bloque>
+}
+
+class Estudio {
+  - nombre : String
+  - datosTransferencia : String
+}
+
+class PoliticaEstudio {
+  - abonoMinimo : int
+  - horasAnticipacion : int = 48
+  - reagendamientosPorAbono : int = 1
+  - textoCondiciones : String
+}
+
+class Trabajo {
+  - id : Long
+  - idea : String
+  - zona : String
+  - tamanoCm : int
+  - estado : EstadoTrabajo
+  + duracionSesionHoras() : double
+  + tieneAbonoVigente() : boolean
+  + saldoPendiente() : int
+  + reservarSesion(b : Bloque, estado : EstadoSesion) : Sesion
+  + registrarAbonoPendiente(comprobante : String) : Abono
+  + versionAprobada() : VersionDiseno
+}
+
+class Cotizacion {
+  - tipoPrecio : TipoPrecio
+  - valor : int
+  - sesionesEstimadas : int
+  - duracionSesionHoras : double
+  - montoAbono : int
+  + valorAcordado() : int
+}
+
+class VersionDiseno {
+  - numero : int
+  - imagen : String
+  - fecha : LocalDateTime
+  - esAjuste : boolean
+  - aprobada : boolean
+  + aprobar() : void
+}
+
+class Abono {
+  - monto : int
+  - comprobante : String
+  - fechaTransferencia : LocalDate
+  - estado : EstadoAbono
+  - fechaValidacion : LocalDateTime
+  + validar(p : Personal) : void
+  + rechazar(motivo : String) : void
+}
+
+class Sesion {
+  - estado : EstadoSesion
+  - fechaAceptacionCondiciones : LocalDateTime
+  - observaciones : String
+  + confirmar() : void
+  + cancelar(motivo : String) : void
+  + marcarRealizada(obs : String) : void
+}
+
+class Bloque {
+  - fecha : LocalDate
+  - horaInicio : LocalTime
+  - horaTermino : LocalTime
+  - estado : EstadoBloque
+  + estaLibre() : boolean
+  + duracionHoras() : double
+  + ocupar() : void
+  + liberar() : void
+}
+
+class FotoAvance {
+  - imagen : String
+  - fecha : LocalDateTime
+}
+
+class Consentimiento {
+  - fechaAceptacion : LocalDateTime
+  - respuestasSalud : String
+  + descargarPdf() : byte[]
+}
+
+class ControladorReserva <<control>> {
+  + iniciarReserva(idTrabajo : Long) : List<Bloque>
+  + reservar(idBloque : Long, aceptaCondiciones : boolean) : Sesion
+  + subirComprobante(archivo : String) : void
+}
+ControladorReserva ..> Trabajo : <<usa>>
+ControladorReserva ..> Bloque : <<usa>>
+
+Usuario <|-- Cliente
+Usuario <|-- Personal
+
+Estudio "1" o-- "1..*" Personal : integra >
+Estudio "1" *-- "1" PoliticaEstudio
+
+Cliente "1" -- "0..*" Trabajo : solicita >
+Personal "1" -- "0..*" Trabajo : tatuador asignado >
+Personal "1" -- "0..*" Bloque : ofrece >
+
+Trabajo "1" *-- "0..1" Cotizacion
+Trabajo "1" *-- "0..*" VersionDiseno
+Trabajo "1" *-- "0..*" Abono
+Trabajo "1" *-- "0..*" Sesion
+Trabajo "1" *-- "0..1" Consentimiento
+
+Sesion "0..*" -- "1" Bloque : ocupa >
+Sesion "1" *-- "0..5" FotoAvance
+Abono "0..*" -- "0..1" Personal : validado por >
+
+
+package "Enumeraciones (tipos de los atributos)" {
+enum EstadoTrabajo <<enumeration>> {
+  SOLICITADO
+  COTIZADO
+  ACEPTADO
+  CON_ABONO
+  EN_CURSO
+  TERMINADO
+  CANCELADO
+}
+enum EstadoSesion <<enumeration>> {
+  PRERRESERVADA
+  CONFIRMADA
+  REALIZADA
+  CANCELADA
+  INASISTENCIA
+}
+enum EstadoAbono <<enumeration>> {
+  PENDIENTE
+  VALIDADO
+  RECHAZADO
+  PERDIDO
+  DESCONTADO
+}
+enum EstadoBloque <<enumeration>> {
+  LIBRE
+  OCUPADO
+}
+enum TipoPrecio <<enumeration>> {
+  CERRADO
+  POR_SESION
+}
+enum Rol <<enumeration>> {
+  TATUADOR
+  RECEPCION
+  DUENO
+}
+
+}
+EstadoTrabajo -[hidden]right- EstadoSesion
+EstadoSesion -[hidden]right- EstadoAbono
+EstadoAbono -[hidden]right- EstadoBloque
+EstadoBloque -[hidden]right- TipoPrecio
+TipoPrecio -[hidden]right- Rol
+Bloque -[hidden]down- EstadoTrabajo
+
+note bottom of Bloque
+  {un bloque tiene a lo más una
+  sesión no cancelada} (RN03)
+end note
+@enduml
